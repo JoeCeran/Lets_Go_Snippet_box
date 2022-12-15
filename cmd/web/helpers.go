@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-playground/form/v4"
+	"github.com/justinas/nosurf"
 	"net/http"
 	"runtime/debug"
 	"time"
@@ -68,4 +69,21 @@ func (app *application) newTemplata(r *http.Request) *templateData {
 		CurrentYear: time.Now().Year(),
 		Flash:       app.sessionManager.PopString(r.Context(), "flash"),
 	}
+}
+
+func (app *application) newTemplateData(r *http.Request) *templateData {
+	return &templateData{
+		CurrentYear:     time.Now().Year(),
+		Flash:           app.sessionManager.PopString(r.Context(), "flash"),
+		IsAuthenticated: app.isAuthenticate(r),
+		CSRFToken:       nosurf.Token(r),
+	}
+}
+
+func (app *application) isAuthenticate(r *http.Request) bool {
+	isAuthenticated, ok := r.Context().Value(isAuthenticatedContextKey).(bool)
+	if !ok {
+		return false
+	}
+	return isAuthenticated
 }

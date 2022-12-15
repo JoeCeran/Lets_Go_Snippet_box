@@ -2,6 +2,7 @@
 
 {{define "main"}}
 <form action='/snippet/create' method='POST'>
+    <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
     <div>
         <label>Title:</label>
         {{with .Form.FieldErrors.title}}
@@ -9,7 +10,6 @@
         {{end}}
         <input type='text' name='title' value='{{.Form.Title}}'>
     </div>
-
     <div>
         <label>Content:</label>
         {{with .Form.FieldErrors.content}}
